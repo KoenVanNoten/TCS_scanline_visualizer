@@ -20,6 +20,8 @@ If a sample is scanned using a LGM LIPPMAN TCS with the TCS software, each TC (u
 To optimise the visualisation of TC variability along a scanline, a python script was developed that generates a figure computed from three consecutive TC and TD measurements (at least 3 scans are necessary to obtain a solid mean). The generated figure illustrates the temperature profiles, the TC variation along the sample using the TC mode, and the TC and the TD variation along the sample using the TD mode. The mean TC and TD values are computed from the raw data and represent the mean TC value between the Start and End position. The modus is the TC/TD value that corresponds to the maximum of the cumulative distribution of the three scanlines.
 
 # Caption to the generated figure
+![alt text](https://github.com/KoenVanNoten/TCS_scanline_visualizer/blob/master/084W1478%20-%20178.20%20-%2012-TC-TD.jpg)
+
 Title: editable
 
 SC: temperature profile of the cold sensor; 
