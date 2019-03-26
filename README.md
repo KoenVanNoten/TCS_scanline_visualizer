@@ -21,13 +21,23 @@ To optimise the visualisation of TC variability along a scanline, a python scrip
 
 # Caption to the generated figure
 Title: editable
+
 SC: temperature profile of the cold sensor; 
+
 SH: temperature profile of the hot sensor; 
+
 SHy: temperature profile of the second hot sensor used for TD measurements. 
+
 #x.1 to# x.3: scanlines using the TC mode; 
+
 #x.4 to x.6: scanlines using TD mode. 
+
 The upper TC plot illustrates the TC variation along the scanline using the TC mode. 
+
 The second TC plot and the TD plot are computed using the TD mode. 
+
 Mean TC and TD values (blue line) are computed for each scanline and mean of three scanlines is indicated. 
+
 Histograms illustrate the weighted (total sum = 1) cumulative distributions of TC and TD values. 
+
 Maximum of the distribution is indicated as the modus (blue line). 
