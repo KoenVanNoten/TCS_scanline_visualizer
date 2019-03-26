@@ -29,5 +29,4 @@ SC: temperature profile of the cold sensor; SH: temperature profile of the hot s
 #x.1 to# x.3: scanlines using the TC mode; #x.4 to x.6: scanlines using TD mode. 
 
 The upper TC plot illustrates the TC variation along the scanline using the TC mode. The second TC plot and the TD plot are computed using the TD mode. Mean TC and TD values (blue line) are computed for each scanline and mean of three scanlines is indicated. Histograms illustrate the weighted (total sum = 1) cumulative distributions of TC and TD values. Maximum of the distribution is indicated as the modus (red line). 
-
 ![alt text](https://github.com/KoenVanNoten/TCS_scanline_visualizer/blob/master/084W1478%20-%20178.20%20-%2012-TC-TD.png)
