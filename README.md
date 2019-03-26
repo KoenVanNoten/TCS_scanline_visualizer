@@ -18,3 +18,16 @@ If a sample is scanned using a LGM LIPPMAN TCS with the TCS software, each TC (u
 - the TD variation along the scanline between the Start and End position.
 
 To optimise the visualisation of TC variability along a scanline, a python script was developed that generates a figure computed from three consecutive TC and TD measurements (at least 3 scans are necessary to obtain a solid mean). The generated figure illustrates the temperature profiles, the TC variation along the sample using the TC mode, and the TC and the TD variation along the sample using the TD mode. The mean TC and TD values are computed from the raw data and represent the mean TC value between the Start and End position. The modus is the TC/TD value that corresponds to the maximum of the cumulative distribution of the three scanlines.
+
+# Caption to the generated figure
+Title: editable
+SC: temperature profile of the cold sensor; 
+SH: temperature profile of the hot sensor; 
+SHy: temperature profile of the second hot sensor used for TD measurements. 
+#x.1 to# x.3: scanlines using the TC mode; 
+#x.4 to x.6: scanlines using TD mode. 
+The upper TC plot illustrates the TC variation along the scanline using the TC mode. 
+The second TC plot and the TD plot are computed using the TD mode. 
+Mean TC and TD values (blue line) are computed for each scanline and mean of three scanlines is indicated. 
+Histograms illustrate the weighted (total sum = 1) cumulative distributions of TC and TD values. 
+Maximum of the distribution is indicated as the modus (blue line). 
