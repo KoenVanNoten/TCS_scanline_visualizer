@@ -32,4 +32,4 @@ Abbreviations used in the figure are:
 - scanlines #x.4 to #x.6: scanlines using the TD mode. 
 
 The upper TC plot illustrates the TC variation along the scanline using the TC mode. The second TC plot and the TD plot are computed using the TD mode. Mean TC and TD values (blue line) are computed for each scanline and mean of three scanlines is indicated. Histograms illustrate the weighted (total sum = 1) cumulative distributions of TC and TD values. Maximum of the distribution is indicated as the modus (red line). 
-![alt text](https://github.com/KoenVanNoten/TCS_scanline_visualizer/blob/master/084W1478 - 217.20 - 1-TC-TD.png)
+![alt text](https://github.com/KoenVanNoten/TCS_scanline_visualizer/blob/master/084W1478%20-%20217.20%20-%201-TC-TD.png)
