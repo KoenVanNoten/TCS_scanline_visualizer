@@ -13,20 +13,24 @@ Depending on the speed of the motor, different sample resolutions can be obtaine
 
 # A Python script for scanline visualisation
 If a sample is scanned using a LGM LIPPMAN TCS with the TCS software, each TC (using the TC mode) and TD (using the TD mode) scan generates a text file in which following information is stored:
-- both the cold and the warm temperature profiles measured by the two sensors;
-- position of the sensors when they are measuring these temperatures;
+- both the cold (SC_T)) and the warm (SH_T) temperature profiles measured by the two sensors;
+- position of the cold (SC_pos) and hot sensors (SH_pos) when they are measuring these temperatures;
 - TC variation along the scanline between the Start and End position;
-- the temperature profile of the second hot sensor used for TD measurement;
+- the temperature profile of the second hot sensor (SHy_T) used for TD measurement;
 - the TD variation along the scanline between the Start and End position.
 
 To optimise the visualisation of TC variability along a scanline, a python script was developed that generates a figure computed from three consecutive TC and TD measurements (at least 3 scans are necessary to obtain a solid mean). The generated figure illustrates the temperature profiles, the TC variation along the sample using the TC mode, and the TC and the TD variation along the sample using the TD mode. The mean TC and TD values are computed from the raw data and represent the mean TC value between the Start and End position. The modus is the TC/TD value that corresponds to the maximum of the cumulative distribution of the three scanlines.
 
-# Caption to the generated figure
-Title: editable; 
+# Generated Figure
+The Title is automatically generated from provided borehole information.  
 
-SC: temperature profile of the cold sensor; SH: temperature profile of the hot sensor; SHy: temperature profile of the second hot sensor used for TD measurements. 
+Abbreviations used in the figure are:
+SC: temperature profile of the cold sensor; 
+SH: temperature profile of the hot sensor; 
+SHy: temperature profile of the second hot sensor used for TD measurements. 
 
-#x.1 to# x.3: scanlines using the TC mode; #x.4 to x.6: scanlines using TD mode. 
+scanlines #x.1 to #x.3: scanlines using the TC mode; 
+scanlines #x.4 to #x.6: scanlines using the TD mode. 
 
 The upper TC plot illustrates the TC variation along the scanline using the TC mode. The second TC plot and the TD plot are computed using the TD mode. Mean TC and TD values (blue line) are computed for each scanline and mean of three scanlines is indicated. Histograms illustrate the weighted (total sum = 1) cumulative distributions of TC and TD values. Maximum of the distribution is indicated as the modus (red line). 
 ![alt text](https://github.com/KoenVanNoten/TCS_scanline_visualizer/blob/master/084W1478%20-%20178.20%20-%2012-TC-TD.png)
