@@ -89,10 +89,13 @@ SH_pos = "SensorHot_Position (mm)"
 SC_T = "SensorCold_Temperature (C)"
 SH_T = "SensorHot_Temperature (C)"
 SHy_T = "SensorHoty:_Temperature (C)"
-names = ["Platform: Position (mm)", "Source_Position (mm)", "Source_U (V)", "Source_I (A)", "Source_P (W)",
-         SC_pos, "SensorCold_Voltage (mV)", SC_T, SH_pos, "SensorHot_Voltage (mV)", SH_T,
+names_TC = ["Platform: Position (mm)", "Source_Position (mm)", "Source_U (V)", "Source_I (A)", "Source_P (W)",
+            SC_pos, "SensorCold_Voltage (mV)", SC_T, SH_pos, "SensorHot_Voltage (mV)", SH_T,
          "Velocity (mm/s)", "NumPerInterval", "Num", "Time (s)"]
-names_TD = names + ["SensorHoty:_Voltage (mV)", SHy_T]
+names_TD = names_TC + ["SensorHoty:_Voltage (mV)", SHy_T]
+names_p0 = []
+names_p5 = []
+names_p9 = []
 
 # Empty data used for storing the means etc...
 means = []
@@ -262,6 +265,17 @@ for i, color in zip(TC_rep, colors_TC):
     T_np = []
     TC = []
 
+
+    df = pd.read_csv(in_filespec_TC, comment="\"", delim_whitespace=True,
+                         usecols = [0,1,2,3,4], header = None, names=["p","pos","SC_T","SH_T","TC"])
+    pos_processed = df[df["p"].str.startswith('p4')]["pos"][2:]
+    SC_T_processed = df[df["p"].str.startswith('p4')]["SC_T"][2:]
+    SH_T_processed = df[df["p"].str.startswith('p4')]["SH_T"][2:]
+    TC = df[df["p"].str.startswith('p4')]["TC"][2:]
+
+    pos_np = df[df["p"].str.startswith('p0')]["pos"]
+    T_np = df[df["p"].str.startswith('p0')]["SH_T"]
+    '''
     with open(in_filespec_TC) as file:
         for line in file:
             if line.startswith('p4'):
@@ -283,6 +297,7 @@ for i, color in zip(TC_rep, colors_TC):
 
     TC = np.array(TC[2:])
     TC = TC.astype(np.float)
+    '''
 
     # gather all TC data
     TCs.append(TC)
@@ -299,8 +314,8 @@ for i, color in zip(TC_rep, colors_TC):
 
     # make the temperature plot
     ax0 = plt.subplot(gs[0])
-    df = pd.read_csv(in_filespec_TC, comment="\"", delim_whitespace=True, names=names, header=None,
-                     usecols=np.arange(len(names)) + 1)
+    df = pd.read_csv(in_filespec_TC, comment="\"", delim_whitespace=True, names=names_TC, header=None,
+                     usecols=np.arange(len(names_TC)) + 1)
     df = df.dropna()
     df = df[:-1]
     df.index = df["Platform: Position (mm)"]
@@ -333,6 +348,7 @@ if Also_TD:
         TD = []
 
         print(in_filespec_TD)
+
 
 
         with open(in_filespec_TD) as file2:
@@ -494,16 +510,13 @@ if Also_TD:
     plt.xlabel('Position (mm)')
 
 #Define Title of the plot
+#Figure will be saved in the map of the raw measurements
 ax0 = plt.subplot(gs[0])
 if Also_TD:
     plt.title("TC/TD analysis of " + borehole + " " + borehole_loc + ', ' + depth + ' m - %s' % place)
-else:
-    plt.title("TC analysis of " + borehole + " " + borehole_loc + ', ' + depth + ' m - %s' % place)
-
-# Figure will be saved in the map of the raw measurements
-if Also_TD:
     plt.savefig(borehole + ' - ' + depth + ' - %s' % place + '-TC-TD.png', dpi=600)
 else:
+    plt.title("TC analysis of " + borehole + " " + borehole_loc + ', ' + depth + ' m - %s' % place)
     plt.savefig(borehole + ' - ' + depth + ' - %s' % place + '-TC.png', dpi=600)
 
 
