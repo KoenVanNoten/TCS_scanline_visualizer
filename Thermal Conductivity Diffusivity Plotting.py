@@ -14,6 +14,9 @@ import numpy as np
 from matplotlib.ticker import MultipleLocator
 import matplotlib.gridspec as gridspec
 import pylab as P
+import timeit
+
+start = timeit.default_timer()
 
 ###################################################################
 ### SAVE THIS PYTHON SCRIPT IN THE FOLDER OF THE TC TXT FILES   ###
@@ -25,27 +28,27 @@ import pylab as P
 measurement = ['084W1478', 'Waregem', '217.20']
 
 # What's the number of the scanline ?
-place = 14
+place = 1
 
 #How many measurements: default = 3
-TC_rep = np.arange(1, 4, 1)  # how many TC measurements in the TC module: 1-3
-TD_rep = np.arange(4, 7, 1)  # how many TD measurements in the TD module: 4-6
+TC_rep = np.arange(1, 4, 1)  # how many TC measurements were performed in the TC module: 1-3
+TD_rep = np.arange(4, 7, 1)  # how many TD measurements were performed in the TD module: 4-6
 
-#### Do you want only a TC plot (returns 1 TC profile) or also the TC-TD module plots (returns 1 TC and 2 TC-TD profiles)
-#### If Also_TD = True: it returns both TC and TD profiles
-Also_TD = False
+### Do you want only a TC plot (returns 1 TC profile) or do also want the TC-TD module plots (returns 1 TC and 2 TC-TD profiles)
+### If Also_TD = True: it returns both TC and TD profiles
+Also_TD = True
 
 ### Do you want to set the maximum x position of the whole plot set automatic of manually?
-# xposition = True # True if automatic
-xposition = False      #False if manually
+### True if automatic  #False if manually
+xposition = True
 poss_max = 330  # If manually, define the maximum length of the scan (=position after the last standard)
 
-### If XXX_position is True, give me the TC values around this position
-XXX_position = 0
+### If XXX_position is True, give me the 5 mean TC values (from the 3 .txt files) before and after the given XXX position (in mm distance on the TCS)
+XXX_position = True
 XXX = 250
 
-### Do you want to find the position value where Temperature quickly rises to find 0-point of the sample
-T_sampling = False   # if True: find automatic min and max T values before and after sample_zero
+### Do you want to find the position value where Temperature quickly rises to find 0-point of the sample on the TCS ?
+T_sampling = True   # if True: find automatic min and max T values before and after sample_zero
 sample_zero = 100    # Give expected position
 dist_treshhold = 15  # print distance before and after the 0-position (in mm)
 
@@ -110,7 +113,7 @@ n_TC = []
 n_TC_TD = []
 n_TD = []
 
-### Function to plot 1 histgram from 1 .txt file
+### Function to plot 1 histogram from 1 .txt file
 def histogram_loop(TC_TD, name, hists, means):
     bins = np.arange(0., 10, bin_width)
     n, bins, patches = P.hist(TC_TD, bins, normed=0, histtype='bar', rwidth=1, alpha=0.0,
@@ -124,7 +127,7 @@ def histogram_loop(TC_TD, name, hists, means):
 def TC_TD_plotter_loop(ax, TC_TD, name, color):    #for each .txt file, plot 1 histogram
     ax.plot(pos_processed, TC_TD, lw=0.8, color=color)
     mean = round(np.mean(TC_TD), 3)
-    plt.axhline(mean, ls='--', linewidth=0.4, hold=None,
+    plt.axhline(mean, ls='--', linewidth=0.4,
                 zorder=-100, label=(name + " %s" % place + '.%s' % i + ': %s' % mean), color='white')
     plt.legend(loc='upper left', fontsize=7, ncol=1)
 
@@ -153,7 +156,7 @@ def TC_TD_histogram(ax, TC_TDs, name, mean, color, TC_value):
                                      fill='transparant', edgecolor='white', zorder=-500, lw=0.)
     n, bins, patches = P.hist(TC_TDs, bins, weights=weights, histtype='bar', rwidth=1,
                               orientation='horizontal', stacked=1, color=color, edgecolor='black', zorder=100, lw=0.35)
-    plt.axhline(bins[np.argmax(n[len(TC_TDs) - 1])] + 0.025, linewidth=0.5, hold=None, zorder=-100, color='red')
+    plt.axhline(bins[np.argmax(n[len(TC_TDs) - 1])] + 0.025, linewidth=0.5, zorder=-100, color='red')
 
     print(name + " nr of observations: %s" % int(sum(n_counts[len(TC_TDs) - 1])))
     print(name + " Modus =  %s" % (bins[np.argmax(n[len(TC_TDs) - 1])] + 0.025))
@@ -176,7 +179,7 @@ def TC_TD_histogram(ax, TC_TDs, name, mean, color, TC_value):
             plt.ylim(TDmin, TDmax)
         else:
             plt.ylim(TCmin, TCmax)
-    plt.axhline(np.mean(mean), linewidth=0.5, hold=None, zorder=-100, color='blue')
+    plt.axhline(np.mean(mean), linewidth=0.5, zorder=-100, color='blue')
 
     plt.axhline(-100, color='white', label='n = %s' % int(sum(n_counts[len(TC_TDs) - 1])))
     ax.yaxis.tick_right()
@@ -191,7 +194,7 @@ def TC_TD_plot(ax, TC_TDs, name, mean, poss, max, TC_value):
 
     # finding middle value of the maximum cumulative histogram
     TC_TD_hist = round(bins[np.argmax(n[len(TC_TDs) - 1])] + 0.025,3)
-    plt.axhline(TC_TD_hist, linewidth=0.5, hold=None, zorder=-100, color='red', label="Modus: %s" % TC_TD_hist)
+    plt.axhline(TC_TD_hist, linewidth=0.5, zorder=-100, color='red', label="Modus: %s" % TC_TD_hist)
 
     xlocator(ax, 50, 10)
     if np.max(TC_TDs[len(TC_TDs) - 1]) - np.min(TC_TDs[len(TC_TDs) - 1]) > 5:
@@ -226,11 +229,11 @@ def TC_TD_plot(ax, TC_TDs, name, mean, poss, max, TC_value):
                 zorder=-100, label="Mean: %s" % round(np.mean(mean), 3), color='blue')
 
     if name == "TC":
-        plt.axvline(np.min(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, hold=None, zorder=-100)
-        plt.axvline(np.max(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, hold=None, zorder=-100)
+        plt.axvline(np.min(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, zorder=-100)
+        plt.axvline(np.max(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, zorder=-100)
     else:
-        plt.axvline(np.min(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, hold=None, zorder=-100, ls='--')
-        plt.axvline(np.max(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, hold=None, zorder=-100, ls='--')
+        plt.axvline(np.min(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, zorder=-100, ls='--')
+        plt.axvline(np.max(poss[len(TC_TDs) - 1]), color='grey', linewidth=0.8, zorder=-100, ls='--')
     legend = plt.legend(loc='upper left', fontsize=7, ncol=1)
     frame = legend.get_frame()
     frame.set_facecolor('white')
@@ -241,12 +244,9 @@ def TC_TD_plot(ax, TC_TDs, name, mean, poss, max, TC_value):
 ### Making the figure now
 if Also_TD:
     gs = gridspec.GridSpec(4, 2, hspace=0.0, wspace=0.05, height_ratios=[2, 1, 1, 1], width_ratios=[8, 1])
-else:
-    gs = gridspec.GridSpec(2, 2, hspace=0.0, wspace=0.05, height_ratios=[2, 1], width_ratios=[8, 1])
-
-if Also_TD:
     fig = plt.figure(figsize=(7, 7))
 else:
+    gs = gridspec.GridSpec(2, 2, hspace=0.0, wspace=0.05, height_ratios=[2, 1], width_ratios=[8, 1])
     fig = plt.figure(figsize=(7, 5))
 
 ### Loop over the individual TC measurements (text files x.1 to x.3)
@@ -289,7 +289,6 @@ for i, color in zip(TC_rep, colors_TC):
     locs.append('%s' % place + '.%s' % i)
     poss.append(pos_processed)
 
-
     # define the TC histogram
     ax3 = plt.subplot(gs[3])
     histogram_loop(TC, "TC", hists, means)
@@ -312,7 +311,7 @@ for i, color in zip(TC_rep, colors_TC):
     # Print the position where temperatures starts rising near the sample
     if T_sampling:
         for i in np.arange(sample_zero + 43 - dist_treshhold, sample_zero + 53 - dist_treshhold, 1):
-            print("     Hot Sensor T at", pos_np[i], "=", T_np[i], "°C")
+            print("     Hot Sensor T at", pos_np[i], "mm =", T_np[i], "°C")
 
 if XXX_position:
     poss = np.array(poss)
@@ -362,6 +361,7 @@ if Also_TD:
         TC_TD = TC_TD.astype(np.float)
         TD = np.array(TD)
         TD = TD.astype(np.float)
+
         # gather all TC_TD and TD data
         TC_TDs.append(TC_TD)
         TDs.append(TD.astype(np.float))
@@ -428,11 +428,11 @@ plt.ylabel("Temperature \n(" + u"\u00b0" + "C)")
 ax0.axes.xaxis.set_ticklabels([])  # don't show the x-labels for the first plot
 
 ### Plot vertical grey lines between those locations where the TC / TD sample measurements are done on the TCS
-plt.axvline(np.min(poss[len(TCs) - 1]), color='grey', linewidth=0.8, hold=None, zorder=-100)
-plt.axvline(np.max(poss[len(TCs) - 1]), color='grey', linewidth=0.8, hold=None, zorder=-100)
+plt.axvline(np.min(poss[len(TCs) - 1]), color='grey', linewidth=0.8, zorder=-100)
+plt.axvline(np.max(poss[len(TCs) - 1]), color='grey', linewidth=0.8, zorder=-100)
 if Also_TD:
-    plt.axvline(np.min(poss_TC_TD[len(TC_TDs) - 1]), color='grey', ls='--', linewidth=0.8, hold=None, zorder=-100)
-    plt.axvline(np.max(poss_TC_TD[len(TC_TDs) - 1]), color='grey', ls='--', linewidth=0.8, hold=None, zorder=-100)
+    plt.axvline(np.min(poss_TC_TD[len(TC_TDs) - 1]), color='grey', ls='--', linewidth=0.8, zorder=-100)
+    plt.axvline(np.max(poss_TC_TD[len(TC_TDs) - 1]), color='grey', ls='--', linewidth=0.8, zorder=-100)
 if Also_TD:
     plt.legend(ncol = 5, loc=8, fontsize=7)
 else:
@@ -505,4 +505,7 @@ if Also_TD:
 else:
     plt.savefig(borehole + ' - ' + depth + ' - %s' % place + '-TC.png', dpi=600)
 
+
+stop = timeit.default_timer()
+print('Computation Time: ', stop - start)
 plt.show()
