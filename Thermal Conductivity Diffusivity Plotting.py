@@ -50,7 +50,7 @@ XXX = 250
 ### Do you want to find the position value where Temperature quickly rises to find 0-point of the sample on the TCS ?
 T_sampling = True   # if True: find automatic min and max T values before and after sample_zero
 sample_zero = 100    # Give expected position
-dist_treshhold = 15  # print distance before and after the 0-position (in mm)
+dist_treshhold = 15  # print distance before and after the 0-position (in mm) - default = 15
 
 ### Colors to plot the TC and TD measurements. Nr of colors need to be the same as nr of
 ### repetitive measurements. E.g. if only 2 TC measurements, remove a color. Default = 3 measurements
@@ -93,9 +93,6 @@ names_TC = ["Platform: Position (mm)", "Source_Position (mm)", "Source_U (V)", "
             SC_pos, "SensorCold_Voltage (mV)", SC_T, SH_pos, "SensorHot_Voltage (mV)", SH_T,
          "Velocity (mm/s)", "NumPerInterval", "Num", "Time (s)"]
 names_TD = names_TC + ["SensorHoty:_Voltage (mV)", SHy_T]
-names_p0 = []
-names_p5 = []
-names_p9 = []
 
 # Empty data used for storing the means etc...
 means = []
@@ -174,7 +171,7 @@ def TC_TD_histogram(ax, TC_TDs, name, mean, color, TC_value):
         ylocator(ax, 1, .2)
     if TCscale:
         if name == "TC_TD":
-            plt.ylim(np.min(TC_value[len(TC_value) - 1]) - range, np.max(TC_value[len(TC_value) - 1]) + range)
+            plt.ylim(np.min(np.array(TC_value)[len(TC_value) - 1]) - range, np.max(np.array(TC_value)[len(TC_value) - 1]) + range)
         else:
             plt.ylim(np.min(TC_TDs[len(TC_TDs) - 1]) - range, np.max(TC_TDs[len(TC_TDs) - 1]) + range)
     else:
@@ -217,7 +214,7 @@ def TC_TD_plot(ax, TC_TDs, name, mean, poss, max, TC_value):
         plt.xlim(0, max)
     if TCscale:
         if name == "TC_TD":
-            plt.ylim(np.min(TC_value[len(TC_value) - 1]) - range, np.max(TC_value[len(TC_value) - 1] + range))
+            plt.ylim(np.min(np.array(TC_value)[len(TC_value) - 1]) - range, np.max(np.array(TC_value)[len(TC_value) - 1] + range))
         else:
             plt.ylim(np.min(TC_TDs[len(TC_TDs) - 1]) - range, np.max(TC_TDs[len(TC_TDs) - 1]) + range)
     else:
@@ -265,39 +262,15 @@ for i, color in zip(TC_rep, colors_TC):
     T_np = []
     TC = []
 
-
     df = pd.read_csv(in_filespec_TC, comment="\"", delim_whitespace=True,
                          usecols = [0,1,2,3,4], header = None, names=["p","pos","SC_T","SH_T","TC"])
-    pos_processed = df[df["p"].str.startswith('p4')]["pos"][2:]
-    SC_T_processed = df[df["p"].str.startswith('p4')]["SC_T"][2:]
-    SH_T_processed = df[df["p"].str.startswith('p4')]["SH_T"][2:]
-    TC = df[df["p"].str.startswith('p4')]["TC"][2:]
+    pos_processed = list(df[df["p"].str.startswith('p4')]["pos"][2:])
+    SC_T_processed = list(df[df["p"].str.startswith('p4')]["SC_T"][2:])
+    SH_T_processed = list(df[df["p"].str.startswith('p4')]["SH_T"][2:])
+    TC = list(df[df["p"].str.startswith('p4')]["TC"][2:])
 
-    pos_np = df[df["p"].str.startswith('p0')]["pos"]
-    T_np = df[df["p"].str.startswith('p0')]["SH_T"]
-    '''
-    with open(in_filespec_TC) as file:
-        for line in file:
-            if line.startswith('p4'):
-                split = line.strip().split()
-                pos_processed.append(split[1])
-                SC_T_processed.append(split[2])
-                SH_T_processed.append(split[3])
-                TC.append(split[4])
-            if line.startswith('p0'):
-                split = line.strip().split()
-                pos_np.append(split[1])
-                T_np.append(split[3])
-    pos_processed = np.array(pos_processed[2:])
-    pos_processed = pos_processed.astype(np.float)
-    SC_T_processed = np.array(SC_T_processed[2:])
-    SC_T_processed = SC_T_processed.astype(np.float)
-    SH_T_processed = np.array(SH_T_processed[2:])
-    SH_T_processed = SH_T_processed.astype(np.float)
-
-    TC = np.array(TC[2:])
-    TC = TC.astype(np.float)
-    '''
+    pos_np = list(df[df["p"].str.startswith('p0')]["pos"])
+    T_np = list(df[df["p"].str.startswith('p0')]["SH_T"])
 
     # gather all TC data
     TCs.append(TC)
@@ -326,14 +299,15 @@ for i, color in zip(TC_rep, colors_TC):
     # Print the position where temperatures starts rising near the sample
     if T_sampling:
         for i in np.arange(sample_zero + 43 - dist_treshhold, sample_zero + 53 - dist_treshhold, 1):
-            print("     Hot Sensor T at", pos_np[i], "mm =", T_np[i], "°C")
+            print("     Hot Sensor T at", pos_np[i], "mm =", np.round(T_np[i],3), "°C")
+            #print("This is :            #", T_np[i])
 
 if XXX_position:
     poss = np.array(poss)
     # print poss.mean(0)
     for index, item in enumerate(poss.mean(0)):
         if item > XXX - 4 and item < XXX + 5  :
-            print("Mean TC at", round(item,2), "mm = ", TC[index], " W/(m.K)")
+            print("Mean TC at", round(item,2), "mm = ", round(TC[index],3), " W/(m.K)")
 
 
 # Loop over the individual TC_TD and TD measurements (text files x.4 to x.6)
@@ -349,39 +323,21 @@ if Also_TD:
 
         print(in_filespec_TD)
 
+        df = pd.read_csv(in_filespec_TD, comment="\"", delim_whitespace=True,
+                         usecols=[0, 1, 2, 3, 4, 7], header=None, names=["p", "pos", "SC_T", "SH_T", "TC_TD","TD"])
+        pos_np = list(df[df["p"].str.startswith('p0')]["pos"])
+        T_np = list(df[df["p"].str.startswith('p0')]["SH_T"])
 
+        pos_processed = list(df[df["p"].str.startswith('p4')]["pos"][2:])
+        SC_T_processed = list(df[df["p"].str.startswith('p4')]["SC_T"][2:])
+        SH_T_processed = list(df[df["p"].str.startswith('p4')]["SH_T"][2:])
+        TC_TD = list(df[df["p"].str.startswith('p4')]["TC_TD"][2:])
 
-        with open(in_filespec_TD) as file2:
-            for line in file2:
-                if line.startswith('p9 " TD after final correction'):
-                    next(file2)
-                elif line.startswith('p9 "Sample 1 = ' + borehole):
-                    next(file2)
-                elif line.startswith('p9'):
-                    split = line.strip().split()
-                    pos_processed.append(split[1])
-                    SC_T_processed.append(split[2])
-                    SH_T_processed.append(split[3])
-                    TC_TD.append(split[4])
-                    TD.append(split[7])
-                if line.startswith('p0'):
-                    split = line.strip().split()
-                    pos_np.append(split[1])
-                    T_np.append(split[3])
-        pos_processed = np.array(pos_processed)
-        pos_processed = pos_processed.astype(np.float)
-        SC_T_processed = np.array(SC_T_processed)
-        SC_T_processed = SC_T_processed.astype(np.float)
-        SH_T_processed = np.array(SH_T_processed)
-        SH_T_processed = SH_T_processed.astype(np.float)
-        TC_TD = np.array(TC_TD)
-        TC_TD = TC_TD.astype(np.float)
-        TD = np.array(TD)
-        TD = TD.astype(np.float)
+        TD = list(df[df["p"].str.startswith('p9')]["TD"][2:])
 
         # gather all TC_TD and TD data
         TC_TDs.append(TC_TD)
-        TDs.append(TD.astype(np.float))
+        TDs.append(TD)
         locs_TC_TD.append('%s' % place + '.%s' % i)
         poss_TC_TD.append(pos_processed)
 
