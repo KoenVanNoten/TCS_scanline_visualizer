@@ -7,6 +7,8 @@
 ##       v1.1: 13 March 2018 - TC - TC-TD - TD plotter
 ##       v1.2: 18 September 2018: Let user decide to make a TC or a TC and TC/TD plotter
 ##             20 September 2018: no more -990.90 errors anymore + XXX_position request added
+##       v1.3: 04 April 2019: Only pandas to read in_filespec
+
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -431,12 +433,10 @@ if Also_TD == False:
 ## TC plot
 ax2 = plt.subplot(gs[2])
 TC_TD_plot(ax2, TCs, "TC", means, poss, poss_max, TCs)
-if Also_TD:
-    ax2.axes.xaxis.set_ticklabels([])  # hide x-label if TD plot follows
-else:
-    plt.xlabel('Position (mm)')
 
 if Also_TD:
+    ax2.axes.xaxis.set_ticklabels([])  # hide x-label if TD plot follows
+
     ## TC_TD Histogram plot
     ax5 = plt.subplot(gs[5])
     TC_TD_histogram(ax5, TC_TDs, "TC_TD", means_TC_TD, colors_TD, TCs)
@@ -464,6 +464,8 @@ if Also_TD:
     ax6 = plt.subplot(gs[6])
     TC_TD_plot(ax6, TDs, "TD", means_TD, poss_TC_TD, poss_max, TCs)
     plt.xlabel('Position (mm)')
+else:
+    plt.xlabel('Position (mm)')
 
 #Define Title of the plot
 #Figure will be saved in the map of the raw measurements
@@ -477,5 +479,5 @@ else:
 
 
 stop = timeit.default_timer()
-print('Computation Time: ', stop - start)
+print('Computation Time: ', round(stop - start, 2), ' s')
 plt.show()
