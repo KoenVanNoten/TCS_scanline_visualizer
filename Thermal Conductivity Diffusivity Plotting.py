@@ -256,14 +256,6 @@ for i, color in zip(TC_rep, colors_TC):
     in_filespec_TC = borehole + ' - %s' % depth + ' - %s' % place + ".%s" % i + ".tx0"
     print(in_filespec_TC)
 
-    # Set the empty TC data to store
-    pos_processed = []
-    SC_T_processed = []
-    SH_T_processed = []
-    pos_np = []
-    T_np = []
-    TC = []
-
     df = pd.read_csv(in_filespec_TC, comment="\"", delim_whitespace=True,
                          usecols = [0,1,2,3,4], header = None, names=["p","pos","SC_T","SH_T","TC"])
     pos_processed = list(df[df["p"].str.startswith('p4')]["pos"][2:])
@@ -317,12 +309,6 @@ if Also_TD:
     for i, color_TD in zip(TD_rep, colors_TD):
         # use data from TD module
         in_filespec_TD = borehole + ' - %s' % depth + ' - %s' % place + ".%s" % i + ".tx0"
-        pos_processed = []
-        SC_T_processed = []
-        SH_T_processed = []
-        TC_TD = []
-        TD = []
-
         print(in_filespec_TD)
 
         df = pd.read_csv(in_filespec_TD, comment="\"", delim_whitespace=True,
