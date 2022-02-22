@@ -1,4 +1,6 @@
 # TCS_scanline_visualizer: A Python script for Thermal Conductivity Scanline visualisation
+<a href="https://doi.org/10.5281/zenodo.6198724"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.6198724.svg" alt="DOI"></a>
+
 The Thermal Conductivity and Diffusivity Scanner (TCS) is an optical device that is used to determine thermal conductivity (TC) and diffusivity(TD)  of cut samples (cores or raw samples). This python script is developed to visualize raw TCS scanlines of consecutive sample scans.  
 
 # Thermal conductivity and diffusivity scanner (TCS)
